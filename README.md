@@ -49,3 +49,16 @@ Am utilizat 1 pentru a specifica faptul că indexul este creat în ordine cresc�
 
 ![3](https://github.com/andra022/Proiect-ABD/assets/100848049/75b2317d-6dde-4170-b72d-14706831572f)
 
+a) Get the states with a total population of over 10 million:
+
+db.zips.aggregate([
+
+  { $group: { _id: "$state", totalPopulation: { $sum: "$population" } } },
+
+  { $match: { totalPopulation: { $gt: 10000000 } } }
+
+]);
+
+
+![a)](https://github.com/andra022/Proiect-ABD/assets/100848049/24922257-5276-4023-8f32-2efd146ebc2a)
+
