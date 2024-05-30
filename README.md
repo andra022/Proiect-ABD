@@ -90,3 +90,36 @@ Ulterior, rezultatele se grupează după state, calculând populația medie a or
 
 ![b)](https://github.com/andra022/Proiect-ABD/assets/100848049/778e6b31-27f0-4c7a-9fcf-ee792c633d9c)
 
+
+
+c) Get the largest and smallest city in each state
+
+db.zips.aggregate([
+
+  { $group: { _id: { state: "$state_name", city: "$city" }, cityPopulation: { $sum: "$population" } } },
+  
+  { $sort: { "_id.state": 1, cityPopulation: 1 } },
+  
+  {
+  
+    $group: {
+    
+      _id: "$_id.state",
+      
+      largestCity: { $last: "$_id.city" },
+      
+      smallestCity: { $first: "$_id.city" }
+      
+    }
+    
+  }
+  
+]);
+
+Documentele sunt grupate după câmpurile state și city, calculând populația totală pentru fiecare oraș. 
+
+Apoi, rezultatele sunt sortate în funcție de state și populația orașului. 
+
+După aceea, rezultatele sunt grupate din nou după state, iar din fiecare grup sunt selectate primul și ultimul oraș, reprezentând cel mai mic și cel mai mare oraș din fiecare stat.
+
+![c)](https://github.com/andra022/Proiect-ABD/assets/100848049/6519a063-b072-4edf-b8b7-966c7a7f2f78)
