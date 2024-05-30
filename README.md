@@ -37,3 +37,15 @@ mongoimport –uri "mongodb+srv://cluster0.dusbo.mongodb.net/abdtest" --username
 
 
 
+3) Optimizarea Indexurilor
+
+Crearea de indici pe câmpurile utilizate frecvent în interogări este o practică comună de optimizare a bazelor de date, care permite aplicațiilor să funcționeze mai rapid și să fie mai scalabile.
+
+db.zips.createIndex({ state: 1 });
+db.zips.createIndex({ city: 1 });
+db.zips.createIndex({ county: 1 });
+
+Am utilizat 1 pentru a specifica faptul că indexul este creat în ordine crescătoare.
+
+![3](https://github.com/andra022/Proiect-ABD/assets/100848049/75b2317d-6dde-4170-b72d-14706831572f)
+
