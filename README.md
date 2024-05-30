@@ -164,3 +164,50 @@ Rezultatele sunt apoi sortate în funcție de state și populația județului. D
 
 ![d)](https://github.com/andra022/Proiect-ABD/assets/100848049/501ddd46-e99d-4f75-abea-ae5ece454e0a)
 
+
+e) Get the nearest 10 zips from the Willis Tower (41.878876, -87.635918)
+
+  e.1) Adăugarea câmpului GeoJSON
+
+      db.zips.updateMany(
+     
+        {},
+     
+        [
+     
+          {
+            $set: {
+              location: {
+                type: "Point",
+                coordinates: ["$lng", "$lat"]
+              }
+            }
+          }
+        ]
+     
+      );
+
+  ![e) 1](https://github.com/andra022/Proiect-ABD/assets/100848049/85fd54a2-f43f-45d1-bafe-1d84a1c82e49)
+
+  e.2) Creare index geospațial
+
+     db.zips.createIndex({ location: "2dsphere" });
+
+   ![e) 2](https://github.com/andra022/Proiect-ABD/assets/100848049/64f0cdab-b138-49d5-bb51-3c7311158dca)
+
+  e.3) Executarea interogării
+
+     db.zips.aggregate([
+        {
+          $geoNear: {
+            near: { type: "Point", coordinates: [-87.635918, 41.878876] },
+            distanceField: "distance",
+            spherical: true
+          }
+        },
+        { $limit: 10 }
+      ]).toArray();
+
+     
+  ![e) 3](https://github.com/andra022/Proiect-ABD/assets/100848049/a7192b2a-4db8-4a08-a972-23507f2b6539)
+
