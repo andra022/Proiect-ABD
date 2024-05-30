@@ -49,7 +49,12 @@ Am utilizat 1 pentru a specifica faptul că indexul este creat în ordine cresc�
 
 ![3](https://github.com/andra022/Proiect-ABD/assets/100848049/75b2317d-6dde-4170-b72d-14706831572f)
 
-a) Get the states with a total population of over 10 million:
+
+
+Subpunctele proiectului:
+
+
+a) Get the states with a total population of over 10 million
 
 db.zips.aggregate([
 
@@ -60,5 +65,28 @@ db.zips.aggregate([
 ]);
 
 
+Documentele se grupează după câmpul state, calculând populația totală pentru fiecare stat utilizând operatorul $sum. 
+
+Apoi, se aplică operatorul $match pentru a filtra statele cu o populație totală mai mare de 10 milioane.
+
 ![a)](https://github.com/andra022/Proiect-ABD/assets/100848049/24922257-5276-4023-8f32-2efd146ebc2a)
+
+
+
+b) Get the average city population by state
+
+db.zips.aggregate([
+
+  { $group: { _id: { state: "$state_name", city: "$city" }, cityPopulation: { $sum: "$population" } } },
+
+  { $group: { _id: "$_id.state", avgCityPopulation: { $avg: "$cityPopulation" } } }
+
+]);
+
+Documentele se grupează după state și city, calculând populația totală pentru fiecare oraș. 
+
+Ulterior, rezultatele se grupează după state, calculând populația medie a orașelor utilizând operatorul $avg.
+
+
+![b)](https://github.com/andra022/Proiect-ABD/assets/100848049/778e6b31-27f0-4c7a-9fcf-ee792c633d9c)
 
