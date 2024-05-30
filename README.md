@@ -23,7 +23,7 @@ First steps:
 
 1) Conectarea la cluster-ul MongoDB Atlas:
 
-mongosh "mongodb+srv://cluster0.dusbo.mongodb.net/abdtest" --username abdroot
+        mongosh "mongodb+srv://cluster0.dusbo.mongodb.net/abdtest" --username abdroot
 
 ![1](https://github.com/andra022/Proiect-ABD/assets/100848049/d4695981-fbbd-41cf-8061-35d15f03b45d)
 
@@ -31,7 +31,7 @@ mongosh "mongodb+srv://cluster0.dusbo.mongodb.net/abdtest" --username abdroot
 
 Convertirea fisierului de tip excel in format json + importarea acestuia.
 
-mongoimport –uri "mongodb+srv://cluster0.dusbo.mongodb.net/abdtest" --username abdroot --password Test123 --collection zips --file uszips.json –jsonArray
+    mongoimport –uri "mongodb+srv://cluster0.dusbo.mongodb.net/abdtest" --username abdroot --password Test123 --collection zips --file uszips.json –jsonArray
 
 ![2](https://github.com/andra022/Proiect-ABD/assets/100848049/62159f34-dcba-49a6-b9a9-e46bf495d2cb)
 
@@ -41,9 +41,9 @@ mongoimport –uri "mongodb+srv://cluster0.dusbo.mongodb.net/abdtest" --username
 
 Crearea de indici pe câmpurile utilizate frecvent în interogări este o practică comună de optimizare a bazelor de date, care permite aplicațiilor să funcționeze mai rapid și să fie mai scalabile.
 
-db.zips.createIndex({ state: 1 });
-db.zips.createIndex({ city: 1 });
-db.zips.createIndex({ county: 1 });
+    db.zips.createIndex({ state: 1 });
+    db.zips.createIndex({ city: 1 });
+    db.zips.createIndex({ county: 1 });
 
 Am utilizat 1 pentru a specifica faptul că indexul este creat în ordine crescătoare.
 
@@ -56,13 +56,13 @@ Subpunctele proiectului:
 
 a) Get the states with a total population of over 10 million
 
-db.zips.aggregate([
-
-  { $group: { _id: "$state", totalPopulation: { $sum: "$population" } } },
-
-  { $match: { totalPopulation: { $gt: 10000000 } } }
-
-]);
+    db.zips.aggregate([
+    
+      { $group: { _id: "$state", totalPopulation: { $sum: "$population" } } },
+    
+      { $match: { totalPopulation: { $gt: 10000000 } } }
+    
+    ]);
 
 
 Documentele se grupează după câmpul state, calculând populația totală pentru fiecare stat utilizând operatorul $sum. 
@@ -75,13 +75,13 @@ Apoi, se aplică operatorul $match pentru a filtra statele cu o populație total
 
 b) Get the average city population by state
 
-db.zips.aggregate([
-
-  { $group: { _id: { state: "$state_name", city: "$city" }, cityPopulation: { $sum: "$population" } } },
-
-  { $group: { _id: "$_id.state", avgCityPopulation: { $avg: "$cityPopulation" } } }
-
-]);
+    db.zips.aggregate([
+    
+      { $group: { _id: { state: "$state_name", city: "$city" }, cityPopulation: { $sum: "$population" } } },
+    
+      { $group: { _id: "$_id.state", avgCityPopulation: { $avg: "$cityPopulation" } } }
+    
+    ]);
 
 Documentele se grupează după state și city, calculând populația totală pentru fiecare oraș. 
 
@@ -94,27 +94,27 @@ Ulterior, rezultatele se grupează după state, calculând populația medie a or
 
 c) Get the largest and smallest city in each state
 
-db.zips.aggregate([
-
-  { $group: { _id: { state: "$state_name", city: "$city" }, cityPopulation: { $sum: "$population" } } },
-  
-  { $sort: { "_id.state": 1, cityPopulation: 1 } },
-  
-  {
-  
-    $group: {
+    db.zips.aggregate([
     
-      _id: "$_id.state",
+      { $group: { _id: { state: "$state_name", city: "$city" }, cityPopulation: { $sum: "$population" } } },
       
-      largestCity: { $last: "$_id.city" },
+      { $sort: { "_id.state": 1, cityPopulation: 1 } },
       
-      smallestCity: { $first: "$_id.city" }
+      {
       
-    }
-    
-  }
-  
-]);
+        $group: {
+        
+          _id: "$_id.state",
+          
+          largestCity: { $last: "$_id.city" },
+          
+          smallestCity: { $first: "$_id.city" }
+          
+        }
+        
+      }
+      
+    ]);
 
 Documentele sunt grupate după câmpurile state și city, calculând populația totală pentru fiecare oraș. 
 
@@ -128,34 +128,34 @@ După aceea, rezultatele sunt grupate din nou după state, iar din fiecare grup 
 
 d) Get the largest and smallest counties in each state
 
-db.zips.aggregate([
-
-  { 
+    db.zips.aggregate([
     
-    $group: { _id: { state: "$state_name", county: "$county_name" }, countyPopulation: { $sum: "$population" } 
-    } 
-  },
-  
-  { 
+      { 
+        
+        $group: { _id: { state: "$state_name", county: "$county_name" }, countyPopulation: { $sum: "$population" } 
+        } 
+      },
       
-      $sort: { "_id.state": 1, countyPopulation: 1 } 
-  },
-  
-  {
-  
-    $group: {
-    
-      _id: "$_id.state",
+      { 
+          
+          $sort: { "_id.state": 1, countyPopulation: 1 } 
+      },
       
-      largestCounty: { $last: "$_id.county" },
+      {
       
-      smallestCounty: { $first: "$_id.county" }
+        $group: {
+        
+          _id: "$_id.state",
+          
+          largestCounty: { $last: "$_id.county" },
+          
+          smallestCounty: { $first: "$_id.county" }
+          
+        }
+        
+      }
       
-    }
-    
-  }
-  
-]);
+    ]);
 
 Documentele sunt grupate după câmpurile state și county, calculând populația totală pentru fiecare județ. 
 
@@ -210,4 +210,33 @@ e) Get the nearest 10 zips from the Willis Tower (41.878876, -87.635918)
 
      
   ![e) 3](https://github.com/andra022/Proiect-ABD/assets/100848049/a7192b2a-4db8-4a08-a972-23507f2b6539)
+
+
+f) Get the total population situated between 50 and 200 kms around the Statue of Liberty (40.689247, -74.044502)
+
+    db.zips.aggregate([
+      {
+        $geoNear: {
+          near: { type: "Point", coordinates: [-74.044502, 40.689247] },
+          distanceField: "distance",
+          spherical: true,
+          minDistance: 50000,  
+          maxDistance: 200000  
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalPopulation: { $sum: "$population" }
+        }
+      }
+    ]).toArray();
+
+
+Se utilizează operatorul $geoNear pentru a găsi locurile situate între 50 și 200 km de la un punct specificat.
+
+Apoi, rezultatele sunt grupate pentru a calcula populația totală folosind operatorul $group împreună cu operatorul $sum.
+
+![f)](https://github.com/andra022/Proiect-ABD/assets/100848049/d10b44ed-5cd7-4889-b3a7-4414c2f35336)
+
 
