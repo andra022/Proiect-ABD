@@ -123,3 +123,44 @@ Apoi, rezultatele sunt sortate în funcție de state și populația orașului.
 După aceea, rezultatele sunt grupate din nou după state, iar din fiecare grup sunt selectate primul și ultimul oraș, reprezentând cel mai mic și cel mai mare oraș din fiecare stat.
 
 ![c)](https://github.com/andra022/Proiect-ABD/assets/100848049/6519a063-b072-4edf-b8b7-966c7a7f2f78)
+
+
+
+d) Get the largest and smallest counties in each state
+
+db.zips.aggregate([
+
+  { 
+    
+    $group: { _id: { state: "$state_name", county: "$county_name" }, countyPopulation: { $sum: "$population" } 
+    } 
+  },
+  
+  { 
+      
+      $sort: { "_id.state": 1, countyPopulation: 1 } 
+  },
+  
+  {
+  
+    $group: {
+    
+      _id: "$_id.state",
+      
+      largestCounty: { $last: "$_id.county" },
+      
+      smallestCounty: { $first: "$_id.county" }
+      
+    }
+    
+  }
+  
+]);
+
+Documentele sunt grupate după câmpurile state și county, calculând populația totală pentru fiecare județ. 
+
+Rezultatele sunt apoi sortate în funcție de state și populația județului. După aceea, rezultatele sunt grupate din nou după state, iar pentru fiecare grup se selectează primul și ultimul județ, reprezentând cel mai mic și cel mai mare județ.
+
+
+![d)](https://github.com/andra022/Proiect-ABD/assets/100848049/501ddd46-e99d-4f75-abea-ae5ece454e0a)
+
